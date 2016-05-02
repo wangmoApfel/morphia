@@ -256,6 +256,8 @@ public class MapperOptionsTest extends TestBase {
 
     @Entity
     private static class DummyEntity {
+        @Id
+        private ObjectId id;
     }
 
     private static class ComplexObject {

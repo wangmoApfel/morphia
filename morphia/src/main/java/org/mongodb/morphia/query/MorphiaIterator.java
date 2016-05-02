@@ -148,4 +148,10 @@ public class MorphiaIterator<T, V> implements Iterable<V>, Iterator<V> {
         return item;
     }
 
+    /**
+     * @return the entity cache for the iterator
+     */
+    public EntityCache getCache() {
+        return cache;
+    }
 }

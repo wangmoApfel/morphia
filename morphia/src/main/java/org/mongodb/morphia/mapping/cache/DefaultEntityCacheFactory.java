@@ -11,6 +11,7 @@ public class DefaultEntityCacheFactory implements EntityCacheFactory {
      * @return the cache
      */
     public EntityCache createCache() {
-        return new DefaultEntityCache();
+//        return new DefaultEntityCache();
+        return new NoOpCache();
     }
 }
