@@ -17,7 +17,6 @@
 package org.mongodb.morphia.mapping.cache;
 
 import org.bson.types.ObjectId;
-import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.TestBase;
 import org.mongodb.morphia.annotations.Id;
@@ -38,7 +37,6 @@ public class EntityCacheTest extends TestBase {
         test.caching();
     }
 
-    @Test
     public void caching() throws InterruptedException {
         LOG.info(new Date().toString());
         int count = 1200000;
