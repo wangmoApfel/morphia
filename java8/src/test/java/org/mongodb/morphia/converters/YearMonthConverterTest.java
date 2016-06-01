@@ -16,16 +16,12 @@
 
 package org.mongodb.morphia.converters;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
-public class YearMonthConverterTest extends ConverterTest {
+public class YearMonthConverterTest extends ConverterTest<YearMonth, Long> {
     public YearMonthConverterTest() {
         super(new YearMonthConverter());
     }
@@ -35,13 +31,8 @@ public class YearMonthConverterTest extends ConverterTest {
         YearMonth date = YearMonth.of(2016, 3);
         final YearMonth now = YearMonth.now();
 
-        Assert.assertEquals(201603L, getConverter().encode(date));
+        assertFormat(date, 201603L);
         compare(YearMonth.class, now);
-        compare(YearMonth.class, new Date(), now);
-        compare(YearMonth.class, Calendar.getInstance().getTime(), now);
-        compare(YearMonth.class, now.format(DateTimeFormatter.ofPattern("yyyy-MM")), now);
-
-        YearMonth ldt = YearMonth.parse("2016/Mar/20 14:30:15", DateTimeFormatter.ofPattern("yyyy/MMM/dd HH:mm:ss"));
-        compare(YearMonth.class, date, ldt);
+        compare(YearMonth.class, YearMonth.of(123553, 10));
     }
 }

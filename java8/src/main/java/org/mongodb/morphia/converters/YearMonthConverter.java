@@ -19,9 +19,6 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Provides a converter for {@link YearMonth} converting an instance to the numeric form of yyyyMM.
@@ -49,17 +46,6 @@ public class YearMonthConverter extends TypeConverter implements SimpleValueConv
         if (val instanceof Number) {
             long[] value = padder.extract(((Number) val).longValue());
             return YearMonth.of((int) value[0], (int) value[1]);
-        }
-
-        if (val instanceof Date) {
-            final Date date = (Date) val;
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(date.getTime());
-            return YearMonth.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
-        }
-
-        if (val instanceof String) {
-            return YearMonth.parse((String) val, DateTimeFormatter.ofPattern("yyyy-MM"));
         }
 
         throw new IllegalArgumentException("Can't convert to LocalDateTime from " + val);

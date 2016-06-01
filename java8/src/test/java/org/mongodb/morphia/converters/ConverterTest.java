@@ -20,22 +20,27 @@ import org.junit.Assert;
 
 import static java.lang.String.format;
 
-class ConverterTest {
+class ConverterTest<F, T> {
     private TypeConverter converter;
 
     ConverterTest(final TypeConverter converter) {
         this.converter = converter;
     }
 
+    void assertFormat(final F input, final T expected) {
+        Assert.assertEquals(expected, getConverter().encode(input));
+    }
+
     TypeConverter getConverter() {
         return converter;
     }
 
-    void compare(final Class<?> targetClass, final Object value) {
-        compare(targetClass, converter.encode(value), value);
+    @SuppressWarnings("unchecked")
+    void compare(final Class<F> targetClass, final F value) {
+        compare(targetClass, (T) converter.encode(value), value);
     }
 
-    void compare(final Class<?> targetClass, final Object encoded, final Object value) {
+    void compare(final Class<F> targetClass, final T encoded, final F value) {
         final Object decoded = converter.decode(targetClass, encoded);
         Assert.assertEquals(format("%s didn't survive the round trip: decoded = %s encoded=%s", value, decoded, encoded),
                             value, decoded);

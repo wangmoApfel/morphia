@@ -16,15 +16,13 @@
 
 package org.mongodb.morphia.converters;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
-public class LocalTimeConverterTest extends ConverterTest {
+public class LocalTimeConverterTest extends ConverterTest<LocalTime, Long> {
     public LocalTimeConverterTest() {
         super(new LocalTimeConverter());
     }
@@ -32,11 +30,9 @@ public class LocalTimeConverterTest extends ConverterTest {
     @Test
     public void testConversion() throws ParseException {
         final LocalTime time = LocalTime.of(12, 30, 45);
-        final LocalTime now = LocalTime.now();
 
-        Assert.assertEquals(12_30_45_000L, getConverter().encode(time));
+        assertFormat(time, 12_30_45_000L);
         compare(LocalTime.class, LocalTime.now());
-        compare(LocalTime.class, now.format(DateTimeFormatter.ISO_LOCAL_TIME), now);
     }
 
     @Test

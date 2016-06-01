@@ -20,26 +20,19 @@ import org.junit.Test;
 
 import java.text.ParseException;
 import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 
-public class YearConverterTest extends ConverterTest {
+public class YearConverterTest extends ConverterTest<Year, Integer> {
     public YearConverterTest() {
         super(new YearConverter());
     }
 
     @Test
     public void testConversion() throws ParseException {
-        compare(Year.class, Year.now());
-        final Year now = Year.now();
-        compare(Year.class, new Date(), now);
-        compare(Year.class, Calendar.getInstance().get(Calendar.YEAR), now);
-        compare(Year.class, Calendar.getInstance().get(Calendar.YEAR) + "", now);
+        assertFormat(Year.of(2016), 2016);
 
-        Year date = Year.of(2016);
-        Year ldt = Year.parse("2016/Jan/20 14:30:15", DateTimeFormatter.ofPattern("yyyy/MMM/dd HH:mm:ss"));
-        compare(Year.class, date, ldt);
+        compare(Year.class, Year.now());
+        compare(Year.class, Calendar.getInstance().get(Calendar.YEAR), Year.now());
     }
 
 }

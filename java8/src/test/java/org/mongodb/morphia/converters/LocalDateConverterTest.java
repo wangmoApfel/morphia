@@ -16,31 +16,24 @@
 
 package org.mongodb.morphia.converters;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
-public class LocalDateConverterTest extends ConverterTest {
+public class LocalDateConverterTest extends ConverterTest<LocalDate, Date> {
     public LocalDateConverterTest() {
         super(new LocalDateConverter());
     }
 
     @Test
     public void testConversion() throws ParseException {
-        LocalDate fixed = LocalDate.of(2016, 5, 1);
+        assertFormat(LocalDate.of(2016, 5, 1), new Date(116, Calendar.MAY, 1));
 
-        Assert.assertEquals(20160501L, getConverter().encode(fixed));
         compare(LocalDate.class, LocalDate.now());
-        final LocalDate now = LocalDate.now();
-        compare(LocalDate.class, now.format(DateTimeFormatter.ISO_LOCAL_DATE), now);
 
-        Date date = new SimpleDateFormat("yyyy/MMM/dd").parse("2016/Jan/20");
-        LocalDate ldt = LocalDate.parse("2016/Jan/20", DateTimeFormatter.ofPattern("yyyy/MMM/dd"));
-        compare(LocalDate.class, date, ldt);
+        compare(LocalDate.class, LocalDate.of(14478, 10, 15));
     }
 }

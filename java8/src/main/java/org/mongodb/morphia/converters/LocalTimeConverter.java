@@ -19,7 +19,6 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Provides a converter for {@link LocalTime} and convert it to its numeric form of &lt;hour&gt;&lt;minute&gt;&lt;seconds&gt;&lt;nanos&gt;.
@@ -54,10 +53,6 @@ public class LocalTimeConverter extends TypeConverter implements SimpleValueConv
             long time = ((Number) val).longValue();
             long[] values = padder.extract(time);
             return LocalTime.of((int) values[0], (int) values[1], (int) values[2], (int) values[3] * 1_000_000);
-        }
-
-        if (val instanceof String) {
-            return LocalTime.parse((CharSequence) val, DateTimeFormatter.ISO_LOCAL_TIME);
         }
 
         throw new IllegalArgumentException("Can't convert to LocalTime from " + val);

@@ -19,9 +19,10 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+
+import static java.time.ZoneId.systemDefault;
 
 /**
  * Provides a converter for {@link LocalDate} converting the value in to the numeric form of yyyyMMdd.
@@ -53,15 +54,6 @@ public class LocalDateConverter extends TypeConverter implements SimpleValueConv
             return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
         }
 
-        if (val instanceof Number) {
-            long[] values = padder.extract(((Number) val).longValue());
-            return LocalDate.of((int) values[0], (int) values[1], (int) values[2]);
-        }
-
-        if (val instanceof String) {
-            return LocalDate.parse((String) val, DateTimeFormatter.ISO_LOCAL_DATE);
-        }
-
         throw new IllegalArgumentException("Can't convert to LocalDate from " + val);
     }
 
@@ -71,8 +63,8 @@ public class LocalDateConverter extends TypeConverter implements SimpleValueConv
             return null;
         }
         LocalDate date = (LocalDate) value;
-        return padder.pad(date.getYear(),
-                          date.getMonthValue(),
-                          date.getDayOfMonth());
+        return Date.from(date.atStartOfDay()
+                             .atZone(systemDefault())
+                             .toInstant());
     }
 }

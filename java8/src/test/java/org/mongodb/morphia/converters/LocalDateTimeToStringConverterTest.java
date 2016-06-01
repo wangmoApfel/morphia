@@ -16,14 +16,13 @@
 
 package org.mongodb.morphia.converters;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateTimeToStringConverterTest extends ConverterTest {
+public class LocalDateTimeToStringConverterTest extends ConverterTest<LocalDateTime, String> {
     public LocalDateTimeToStringConverterTest() {
         super(new LocalDateTimeToStringConverter());
     }
@@ -31,9 +30,8 @@ public class LocalDateTimeToStringConverterTest extends ConverterTest {
     @Test
     public void testConversion() throws ParseException {
         final LocalDateTime now = LocalDateTime.now();
-        final LocalDateTime dateTime = LocalDateTime.of(2016, 5, 1, 12, 30, 45, 718000000);
 
-        Assert.assertEquals("2016-05-01T12:30:45.718", getConverter().encode(dateTime));
+        assertFormat(LocalDateTime.of(2016, 5, 1, 12, 30, 45, 718059280), "2016-05-01T12:30:45.718059280");
         compare(LocalDateTime.class, now);
         compare(LocalDateTime.class, now.format(DateTimeFormatter.ISO_DATE_TIME), now);
     }

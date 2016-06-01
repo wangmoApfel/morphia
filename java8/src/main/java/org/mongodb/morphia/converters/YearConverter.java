@@ -19,8 +19,6 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.Year;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Provides a converter for {@link Year} converting it to its numeric form.
@@ -42,13 +40,6 @@ public class YearConverter extends TypeConverter implements SimpleValueConverter
 
         if (val instanceof Year) {
             return val;
-        }
-
-        if (val instanceof Date) {
-            final Date date = (Date) val;
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(date.getTime());
-            return Year.of(cal.get(Calendar.YEAR));
         }
 
         if (val instanceof Number) {

@@ -22,7 +22,7 @@ import org.junit.Test;
 import java.time.Instant;
 import java.util.Date;
 
-public class InstantConverterTest extends ConverterTest {
+public class InstantConverterTest extends ConverterTest<Instant, Date> {
     public InstantConverterTest() {
         super(new InstantConverter());
     }

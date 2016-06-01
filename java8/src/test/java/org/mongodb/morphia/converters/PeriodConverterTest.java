@@ -16,13 +16,12 @@
 
 package org.mongodb.morphia.converters;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.Period;
 
-public class PeriodConverterTest extends ConverterTest {
+public class PeriodConverterTest extends ConverterTest<Period, String> {
 
     public PeriodConverterTest() {
         super(new PeriodConverter());
@@ -30,8 +29,7 @@ public class PeriodConverterTest extends ConverterTest {
 
     @Test
     public void testConversion() {
-        Period period = Period.of(0, 3, 12);
-        Assert.assertEquals("P3M12D", getConverter().encode(period));
+        assertFormat(Period.of(0, 3, 12), "P3M12D");
 
         compare(Period.class, Period.between(LocalDate.now().minusMonths(5), LocalDate.now()));
         compare(Period.class, Period.ofWeeks(4));
