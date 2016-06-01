@@ -43,5 +43,4 @@ public class LocalDateConverterTest extends ConverterTest {
         LocalDate ldt = LocalDate.parse("2016/Jan/20", DateTimeFormatter.ofPattern("yyyy/MMM/dd"));
         compare(LocalDate.class, date, ldt);
     }
-
 }

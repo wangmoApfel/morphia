@@ -24,9 +24,10 @@ import java.time.format.DateTimeFormatter;
 /**
  * Provides a converter for {@link LocalTime} and convert it to its numeric form of &lt;hour&gt;&lt;minute&gt;&lt;seconds&gt;&lt;nanos&gt;.
  */
-public class LocalTimeConverter extends Java8DateTimeConverter {
+public class LocalTimeConverter extends TypeConverter implements SimpleValueConverter {
 
     public static final int NANO_OFFSET = 1_000_000_000;
+    private final NumberPadder padder = new NumberPadder(2, 2, 3);
 
     /**
      * Creates the Converter.
@@ -51,10 +52,8 @@ public class LocalTimeConverter extends Java8DateTimeConverter {
 
         if (val instanceof Number) {
             long time = ((Number) val).longValue();
-            long nano = time % NANO_OFFSET;
-            time /= NANO_OFFSET;
-            int[] values = extract(time, 3);
-            return LocalTime.of(values[0], values[1], values[2], (int) nano);
+            long[] values = padder.extract(time);
+            return LocalTime.of((int) values[0], (int) values[1], (int) values[2], (int) values[3] * 1_000_000);
         }
 
         if (val instanceof String) {
@@ -66,7 +65,10 @@ public class LocalTimeConverter extends Java8DateTimeConverter {
 
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
+        if (value == null) {
+            return null;
+        }
         LocalTime time = (LocalTime) value;
-        return expand(time.getHour(), time.getMinute(), time.getSecond()) * NANO_OFFSET + time.getNano();
+        return padder.pad(time.getHour(), time.getMinute(), time.getSecond(), time.getNano() / 1_000_000);
     }
 }

@@ -38,15 +38,15 @@ public final class Java8ConvertersHelper {
      * Add all the converters in bulk using the numeric representation of LocalDateTime.
      *
      * @param morphia             the Morphia instance to configure
-     * @param useLocalDateStrings true if the String form of LocalDateTime should be used.
+     * @param useLocalDateTimeStrings true if the String form of LocalDateTime should be used.
      * @see LocalDateTimeConverter
      * @see LocalDateTimeToStringConverter
      */
-    public static void addConverters(final Morphia morphia, final boolean useLocalDateStrings) {
+    public static void addConverters(final Morphia morphia, final boolean useLocalDateTimeStrings) {
         Converters converters = morphia.getMapper().getConverters();
         converters.addConverter(LocalTimeConverter.class);
         converters.addConverter(YearMonthConverter.class);
-        if (useLocalDateStrings) {
+        if (useLocalDateTimeStrings) {
             converters.addConverter(LocalDateTimeToStringConverter.class);
         } else {
             converters.addConverter(LocalDateTimeConverter.class);

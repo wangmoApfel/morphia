@@ -26,7 +26,8 @@ import java.util.Date;
 /**
  * Provides a converter for {@link YearMonth} converting an instance to the numeric form of yyyyMM.
  */
-public class YearMonthConverter extends Java8DateTimeConverter {
+public class YearMonthConverter extends TypeConverter implements SimpleValueConverter {
+    private final NumberPadder padder = new NumberPadder(2);
 
     /**
      * Creates the Converter.
@@ -46,7 +47,8 @@ public class YearMonthConverter extends Java8DateTimeConverter {
         }
 
         if (val instanceof Number) {
-            return fromInt((Number) val);
+            long[] value = padder.extract(((Number) val).longValue());
+            return YearMonth.of((int) value[0], (int) value[1]);
         }
 
         if (val instanceof Date) {
@@ -63,15 +65,13 @@ public class YearMonthConverter extends Java8DateTimeConverter {
         throw new IllegalArgumentException("Can't convert to LocalDateTime from " + val);
     }
 
-    private Object fromInt(final Number val) {
-        int[] value = extract(val.longValue(), 2);
-        return YearMonth.of(value[0], value[1]);
-    }
-
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
+        if (value == null) {
+            return null;
+        }
         YearMonth yearMonth = (YearMonth) value;
-        return expand(yearMonth.getYear(), yearMonth.getMonthValue());
+        return padder.pad(yearMonth.getYear(), yearMonth.getMonthValue());
 
     }
 

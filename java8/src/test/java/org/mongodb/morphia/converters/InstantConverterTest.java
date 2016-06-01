@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.Date;
 
 public class InstantConverterTest extends ConverterTest {
     public InstantConverterTest() {
@@ -30,7 +31,7 @@ public class InstantConverterTest extends ConverterTest {
     public void testConversion() {
         Instant instant = Instant.ofEpochSecond(42);
 
-        Assert.assertEquals(42000000000L, getConverter().encode(instant));
+        Assert.assertEquals(new Date(42000), getConverter().encode(instant));
         compare(Instant.class, instant);
     }
 }

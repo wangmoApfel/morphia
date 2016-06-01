@@ -27,6 +27,9 @@ import java.time.LocalDateTime;
 public class LocalDateTimeToStringConverter extends LocalDateTimeConverter {
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
+        if (value == null) {
+            return null;
+        }
         return value.toString();
     }
 }

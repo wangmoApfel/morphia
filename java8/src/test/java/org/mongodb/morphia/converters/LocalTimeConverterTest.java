@@ -34,7 +34,7 @@ public class LocalTimeConverterTest extends ConverterTest {
         final LocalTime time = LocalTime.of(12, 30, 45);
         final LocalTime now = LocalTime.now();
 
-        Assert.assertEquals(123045000000000L, getConverter().encode(time));
+        Assert.assertEquals(12_30_45_000L, getConverter().encode(time));
         compare(LocalTime.class, LocalTime.now());
         compare(LocalTime.class, now.format(DateTimeFormatter.ISO_LOCAL_TIME), now);
     }
@@ -45,7 +45,7 @@ public class LocalTimeConverterTest extends ConverterTest {
         for (int hour = 0; hour < 23; hour++) {
             for (int minute = 0; minute < 60; minute++) {
                 for (int second = 0; second < 60; second++) {
-                    compare(LocalTime.class, LocalTime.of(hour, minute, second, random.nextInt(1_000_000_000)));
+                    compare(LocalTime.class, LocalTime.of(hour, minute, second, random.nextInt(1_000) * 1_000_000));
                 }
             }
         }

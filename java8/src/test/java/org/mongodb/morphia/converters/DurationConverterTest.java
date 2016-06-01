@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.Duration;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 
 public class DurationConverterTest extends ConverterTest {
@@ -32,8 +31,9 @@ public class DurationConverterTest extends ConverterTest {
     public void testConversion() {
         Duration duration = Duration.ofSeconds(42);
 
-        Assert.assertEquals(42000000000L, getConverter().encode(duration));
+        Assert.assertEquals("PT42S", getConverter().encode(duration));
         compare(Duration.class, duration);
-//        compare(Duration.class, Duration.of(292L, ChronoUnit.YEARS));
+        compare(Duration.class, Duration.of(120, ChronoUnit.HOURS));
+        compare(Duration.class, Duration.of(80000, ChronoUnit.DAYS));
     }
 }

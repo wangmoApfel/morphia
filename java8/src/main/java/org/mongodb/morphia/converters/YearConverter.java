@@ -64,8 +64,10 @@ public class YearConverter extends TypeConverter implements SimpleValueConverter
 
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
+        if (value == null) {
+            return null;
+        }
         return ((Year) value).getValue();
-
     }
 
 }

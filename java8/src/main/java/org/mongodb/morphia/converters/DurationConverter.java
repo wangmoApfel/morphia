@@ -20,12 +20,12 @@ import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.Duration;
 
-import static org.mongodb.morphia.converters.LocalTimeConverter.NANO_OFFSET;
-
 /**
- * This converter will take a {@link Duration} and convert it to its numeric form of &lt;seconds&gt;&lt;nanos&gt;.
+ * This converter will take a {@link Duration} and convert it to its String form.
+ * @see Duration#toString()
  */
-public class DurationConverter extends Java8DateTimeConverter {
+public class DurationConverter extends TypeConverter implements SimpleValueConverter {
+    private final NumberPadder padder = new NumberPadder(3);
 
     /**
      * Creates the Converter.
@@ -45,11 +45,12 @@ public class DurationConverter extends Java8DateTimeConverter {
         }
 
         if (val instanceof Number) {
-            long time = ((Number) val).longValue();
-            long nano = time % NANO_OFFSET;
-            time /= NANO_OFFSET;
-            int[] values = extract(time, 1);
-            return Duration.ofSeconds(values[0], (int) nano);
+            long[] values = padder.extract(((Number) val).longValue());
+            return Duration.ofSeconds(values[0], values[1] * 1_000_000);
+        }
+
+        if (val instanceof String) {
+            return Duration.parse((CharSequence) val);
         }
 
         throw new IllegalArgumentException("Can't convert to Duration from " + val);
@@ -57,7 +58,9 @@ public class DurationConverter extends Java8DateTimeConverter {
 
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
-        Duration duration = (Duration) value;
-        return duration.getSeconds() * NANO_OFFSET + duration.getNano();
+        if (value == null) {
+            return null;
+        }
+        return value.toString();
     }
 }

@@ -26,7 +26,9 @@ import java.util.Date;
 /**
  * Provides a converter for {@link LocalDate} converting the value in to the numeric form of yyyyMMdd.
  */
-public class LocalDateConverter extends Java8DateTimeConverter {
+public class LocalDateConverter extends TypeConverter implements SimpleValueConverter {
+    private final NumberPadder padder = new NumberPadder(2, 2);
+
     /**
      * Creates the Converter.
      */
@@ -52,8 +54,8 @@ public class LocalDateConverter extends Java8DateTimeConverter {
         }
 
         if (val instanceof Number) {
-            int[] values = extract(((Number) val).longValue(), 3);
-            return LocalDate.of(values[0], values[1], values[2]);
+            long[] values = padder.extract(((Number) val).longValue());
+            return LocalDate.of((int) values[0], (int) values[1], (int) values[2]);
         }
 
         if (val instanceof String) {
@@ -65,7 +67,12 @@ public class LocalDateConverter extends Java8DateTimeConverter {
 
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
+        if (value == null) {
+            return null;
+        }
         LocalDate date = (LocalDate) value;
-        return expand(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
+        return padder.pad(date.getYear(),
+                          date.getMonthValue(),
+                          date.getDayOfMonth());
     }
 }

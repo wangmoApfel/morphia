@@ -19,13 +19,13 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.Instant;
-
-import static org.mongodb.morphia.converters.LocalTimeConverter.NANO_OFFSET;
+import java.util.Date;
 
 /**
- * This converter will take a {@link Instant} and convert it to its numeric form of &lt;epoch seconds&gt;&lt;nanos&gt;.
+ * This converter will take a {@link Instant} and convert it to a java.util.Date instance.
  */
-public class InstantConverter extends Java8DateTimeConverter {
+public class InstantConverter extends TypeConverter implements SimpleValueConverter {
+    private final NumberPadder padder = new NumberPadder(3);
 
     /**
      * Creates the Converter.
@@ -45,11 +45,12 @@ public class InstantConverter extends Java8DateTimeConverter {
         }
 
         if (val instanceof Number) {
-            long time = ((Number) val).longValue();
-            long nano = time % NANO_OFFSET;
-            time /= NANO_OFFSET;
-            int[] values = extract(time, 1);
-            return Instant.ofEpochSecond(values[0], (int) nano);
+            long[] values = padder.extract(((Number) val).longValue());
+            return Instant.ofEpochSecond(values[0], values[1] * 1_000_000);
+        }
+
+        if (val instanceof Date) {
+            return ((Date) val).toInstant();
         }
 
         throw new IllegalArgumentException("Can't convert to Instant from " + val);
@@ -57,7 +58,9 @@ public class InstantConverter extends Java8DateTimeConverter {
 
     @Override
     public Object encode(final Object value, final MappedField optionalExtraInfo) {
-        Instant instant = (Instant) value;
-        return instant.getEpochSecond() * NANO_OFFSET + instant.getNano();
+        if (value == null) {
+            return null;
+        }
+        return Date.from((Instant) value);
     }
 }

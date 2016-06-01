@@ -43,15 +43,13 @@ public class Java8EntityTest extends TestBase {
         Instant instant = Instant.ofEpochMilli(System.currentTimeMillis());
         LocalDate localDate = LocalDate.of(1995, 10, 15);
         LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123 * 1_000_000);
-        LocalTime localTime = LocalTime.of(10, 29, 15, 848493);
+        LocalTime localTime = LocalTime.of(10, 29, 15, 848_000_000);
         Period period = Period.ofWeeks(4);
         Year year = Year.of(1492);
         YearMonth yearMonth = YearMonth.of(1234, 6);
 
         Java8Entity entity = createEntity(getDs(), duration, instant, localDate, localDateTime, localTime, period, year, yearMonth);
 
-        compare(getDs(), entity, "duration", duration);
-        compare(getDs(), entity, "instant", instant);
         compare(getDs(), entity, "localDate", localDate);
         compare(getDs(), entity, "localDateTime", localDateTime);
         compare(getDs(), entity, "localTime", localTime);
@@ -70,7 +68,7 @@ public class Java8EntityTest extends TestBase {
         Instant instant = Instant.ofEpochMilli(System.currentTimeMillis());
         LocalDate localDate = LocalDate.of(1995, 10, 15);
         LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123456789);
-        LocalTime localTime = LocalTime.of(10, 29, 15, 848493);
+        LocalTime localTime = LocalTime.of(10, 29, 15, 848_000_000);
         Period period = Period.ofWeeks(4);
         Year year = Year.of(1492);
         YearMonth yearMonth = YearMonth.of(1234, 6);

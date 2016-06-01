@@ -22,6 +22,7 @@ import org.junit.Test;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 public class LocalDateTimeConverterTest extends ConverterTest {
     public LocalDateTimeConverterTest() {
@@ -33,7 +34,10 @@ public class LocalDateTimeConverterTest extends ConverterTest {
         final LocalDateTime now = LocalDateTime.now();
         final LocalDateTime dateTime = LocalDateTime.of(2016, 5, 1, 12, 30, 45, 718000000);
 
-        Assert.assertEquals(20160501123045718L, getConverter().encode(dateTime));
+        Calendar cal = Calendar.getInstance();
+        cal.set(2016, Calendar.MAY, 1, 12, 30, 45);
+        cal.set(Calendar.MILLISECOND, 718);
+        Assert.assertEquals(cal.getTime(), getConverter().encode(dateTime));
         compare(LocalDateTime.class, now);
         compare(LocalDateTime.class, now.format(DateTimeFormatter.ISO_DATE_TIME), now);
     }
