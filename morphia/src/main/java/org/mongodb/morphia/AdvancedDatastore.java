@@ -1,5 +1,6 @@
 package org.mongodb.morphia;
 
+import com.mongodb.DBCollection;
 import com.mongodb.DBDecoderFactory;
 import com.mongodb.DBObject;
 import com.mongodb.DBRef;
@@ -16,6 +17,8 @@ import org.mongodb.morphia.query.UpdateOperations;
  * @author ScottHernandez
  */
 public interface AdvancedDatastore extends Datastore {
+
+    DBCollection getCollection(String name);
 
     /**
      * @param <T>        The type of the entity

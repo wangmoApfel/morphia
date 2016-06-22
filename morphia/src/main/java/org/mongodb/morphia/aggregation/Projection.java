@@ -1,8 +1,13 @@
 package org.mongodb.morphia.aggregation;
 
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -10,17 +15,20 @@ import java.util.List;
  *
  * @mongodb.driver.manual reference/operator/aggregation/project/ $project
  */
-public final class  Projection {
+public class Projection {
 
-    private final String target;
-    private final String source;
+    private String target;
+    private String source;
     private List<Projection> projections;
     private List<Object> arguments;
     private boolean suppressed = false;
 
+    private Projection() {
+    }
+
     private Projection(final String field, final String source) {
         this.target = field;
-        this.source = "$" + source;
+        this.source = source.startsWith("$") ? source : "$" + source;
     }
 
     private Projection(final String field, final Projection projection, final Projection... subsequent) {
@@ -41,12 +49,58 @@ public final class  Projection {
     }
 
     /**
+     * Define fields for inclusion in a $project
+     *
+     * @param field  the field to include
+     * @param fields optional additional fields to include
+     * @return the new Projection
+     */
+    public static Projection include(final String field, final String... fields) {
+        return new Includes(field, fields);
+    }
+
+    /**
+     * Define fields for exclusion in a $project
+     *
+     * @param field  the field to exclude
+     * @param fields optional additional fields to exclude
+     * @return the new Projection
+     */
+    public static Projection exclude(final String field, final String... fields) {
+        return new Excludes(field, fields);
+    }
+
+    /**
+     * Defines a computed field
+     *
+     * @param field      the field to exclude
+     * @param expression the expression to compute the value of the new field
+     * @return the new Projection
+     */
+    public static Projection compute(final String field, final Expression expression) {
+        return new Computed(field, expression);
+    }
+
+    /**
+     * Renames a field
+     *
+     * @param field       the new field name
+     * @param sourceField the source field to rename.  If the field name does not start with "$" it will be prepended
+     * @return the new Projection
+     */
+    public static Projection rename(final String field, final String sourceField) {
+        return new Projection(field, sourceField);
+    }
+
+    /**
      * Creates a projection on a field
      *
      * @param field the field
      * @return the projection
+     * @deprecated use {@link #include(String, String...)}
      */
-    public static  Projection projection(final String field) {
+    @Deprecated
+    public static Projection projection(final String field) {
         return new Projection(field);
     }
 
@@ -56,8 +110,10 @@ public final class  Projection {
      * @param field          the field
      * @param projectedField the new field name
      * @return the projection
+     * @deprecated use {@link #rename(String, String)}
      */
-    public static  Projection projection(final String field, final String projectedField) {
+    @Deprecated
+    public static Projection projection(final String field, final String projectedField) {
         return new Projection(field, projectedField);
     }
 
@@ -69,7 +125,7 @@ public final class  Projection {
      * @param subsequent the other projections to apply
      * @return the projection
      */
-    public static  Projection projection(final String field, final Projection projection, final Projection... subsequent) {
+    public static Projection projection(final String field, final Projection projection, final Projection... subsequent) {
         return new Projection(field, projection, subsequent);
     }
 
@@ -79,8 +135,10 @@ public final class  Projection {
      * @param operator the operator for the projection
      * @param args     the projection arguments
      * @return the projection
+     * @deprecated use {@link Expression} instead
      */
-    public static  Projection expression(final String operator, final Object... args) {
+    @Deprecated
+    public static Projection expression(final String operator, final Object... args) {
         return new Projection(operator, args);
     }
 
@@ -90,7 +148,7 @@ public final class  Projection {
      * @param args the projection arguments
      * @return the projection
      */
-    public static  Projection list(final Object... args) {
+    public static Projection list(final Object... args) {
         return new Projection(null, args);
     }
 
@@ -100,8 +158,9 @@ public final class  Projection {
      * @param args the projection arguments
      * @return the projection
      * @mongodb.driver.manual reference/operator/aggregation/add $add
+     * @deprecated use {@link Expression#add(Expression, Expression...)} instead
      */
-    public static  Projection add(final Object... args) {
+    public static Projection add(final Object... args) {
         return expression("$add", args);
     }
 
@@ -112,8 +171,9 @@ public final class  Projection {
      * @param arg2 subtraction argument
      * @return the projection
      * @mongodb.driver.manual reference/operator/aggregation/subtract $subtract
+     * @deprecated use {@link Expression#substract(Expression, Expression...)} instead
      */
-    public static  Projection subtract(final Object arg1, final Object arg2) {
+    public static Projection subtract(final Object arg1, final Object arg2) {
         return expression("$subtract", arg1, arg2);
     }
 
@@ -123,8 +183,9 @@ public final class  Projection {
      * @param args the projection arguments
      * @return the projection
      * @mongodb.driver.manual reference/operator/aggregation/multiply $multiply
+     * @deprecated use {@link Expression#multiply(Expression, Expression...)} instead
      */
-    public static  Projection multiply(final Object... args) {
+    public static Projection multiply(final Object... args) {
         return expression("$multiply", args);
     }
 
@@ -135,8 +196,9 @@ public final class  Projection {
      * @param arg2 subtraction argument
      * @return the projection
      * @mongodb.driver.manual reference/operator/aggregation/divide $divide
+     * @deprecated use {@link Expression#divide(Expression, Expression...)} instead
      */
-    public static  Projection divide(final Object arg1, final Object arg2) {
+    public static Projection divide(final Object arg1, final Object arg2) {
         return expression("$divide", arg1, arg2);
     }
 
@@ -147,8 +209,9 @@ public final class  Projection {
      * @param arg2 subtraction argument
      * @return the projection
      * @mongodb.driver.manual reference/operator/aggregation/mod $mod
+     * @deprecated use {@link Expression#mod(Expression, Expression...)} instead
      */
-    public static  Projection mod(final Object arg1, final Object arg2) {
+    public static Projection mod(final Object arg1, final Object arg2) {
         return expression("$mod", arg1, arg2);
     }
 
@@ -160,17 +223,17 @@ public final class  Projection {
     }
 
     /**
-     * @return the projected field name
-     */
-    public String getSource() {
-        return source;
-    }
-
-    /**
      * @return any projections applied to this field
      */
     public List<Projection> getProjections() {
         return projections;
+    }
+
+    /**
+     * @return the projected field name
+     */
+    public String getSource() {
+        return source;
     }
 
     /**
@@ -182,7 +245,9 @@ public final class  Projection {
 
     /**
      * @return true if this field is suppressed from the output
+     * @deprecated use {@link #include(String, String...)} or {@link #exclude(String, String...)} instead
      */
+    @Deprecated
     public boolean isSuppressed() {
         return suppressed;
     }
@@ -191,7 +256,9 @@ public final class  Projection {
      * Marks this field to be suppressed from the output of this stage
      *
      * @return this
+     * @deprecated use {@link #include(String, String...)} or {@link #exclude(String, String...)} instead
      */
+    @Deprecated
     public Projection suppress() {
         suppressed = true;
         return this;
@@ -201,5 +268,101 @@ public final class  Projection {
     public String toString() {
         return String.format("Projection{projectedField='%s', sourceField='%s', projections=%s, suppressed=%s}",
                              source, target, projections, suppressed);
+    }
+
+    private DBObject toExpressionArgs(final List<Object> args) {
+        BasicDBList result = new BasicDBList();
+        for (Object arg : args) {
+            if (arg instanceof Projection) {
+                Projection projection = (Projection) arg;
+                if (projection.getArguments() != null || projection.getProjections() != null || projection.getSource() != null) {
+                    result.add(projection.toDatabase());
+                } else {
+                    String target = projection.getTarget();
+                    result.add(target != null ? "$" + target : null);
+                }
+            } else {
+                result.add(arg);
+            }
+        }
+        return result.size() == 1 ? (DBObject) result.get(0) : result;
+    }
+
+    static class Includes extends Projection {
+
+        private List<String> fields = new ArrayList<String>();
+
+        Includes(final String field, final String[] fields) {
+            this.fields.add(field);
+            Collections.addAll(this.fields, fields);
+        }
+
+        @Override
+        public DBObject toDatabase() {
+            BasicDBObject dbObject = new BasicDBObject();
+            for (String field : fields) {
+                dbObject.put(field, 1);
+            }
+            return dbObject;
+        }
+
+    }
+
+    static class Excludes extends Projection {
+        private List<String> fields = new ArrayList<String>();
+
+        Excludes(final String field, final String[] fields) {
+            this.fields.add(field);
+            Collections.addAll(this.fields, fields);
+        }
+
+        @Override
+        public DBObject toDatabase() {
+            BasicDBObject dbObject = new BasicDBObject();
+            for (String field : fields) {
+                dbObject.put(field, 0);
+            }
+            return dbObject;
+        }
+    }
+
+    private static class Computed extends Projection {
+        private final String name;
+        private final Expression expression;
+
+        Computed(final String name, final Expression expression) {
+            this.name = name;
+            this.expression = expression;
+        }
+
+        @Override
+        public DBObject toDatabase() {
+            return new BasicDBObject(name, expression.toDatabase());
+        }
+
+    }
+
+    @SuppressWarnings("unchecked")
+    DBObject toDatabase() {
+        String target = getTarget();
+
+        if (getProjections() != null) {
+            List<Projection> list = getProjections();
+            DBObject projections = new BasicDBObject();
+            for (Projection subProjection : list) {
+                projections.putAll(subProjection.toDatabase());
+            }
+            return new BasicDBObject(target, projections);
+        } else if (getSource() != null) {
+            return new BasicDBObject(target, getSource());
+        } else if (getArguments() != null) {
+            if (target == null) {
+                return toExpressionArgs(getArguments());
+            } else {
+                return new BasicDBObject(target, toExpressionArgs(getArguments()));
+            }
+        } else {
+            return new BasicDBObject(target, isSuppressed() ? 0 : 1);
+        }
     }
 }

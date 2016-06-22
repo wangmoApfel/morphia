@@ -32,6 +32,14 @@ public interface Datastore {
     AggregationPipeline createAggregation(Class source);
 
     /**
+     * Returns a new query bound to the kind (a specific {@link DBCollection})
+     *
+     * @param name The collection to use when aggregating
+     * @return the aggregation pipeline
+     */
+    AggregationPipeline createAggregation(String name);
+
+    /**
      * Returns a new query bound to the collection (a specific {@link DBCollection})
      *
      * @param collection The collection to query

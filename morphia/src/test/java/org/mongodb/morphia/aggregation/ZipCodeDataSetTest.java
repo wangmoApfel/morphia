@@ -25,12 +25,13 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import static java.lang.String.format;
+import static org.mongodb.morphia.aggregation.Accumulator.sum;
+import static org.mongodb.morphia.aggregation.AggregationField.field;
 import static org.mongodb.morphia.aggregation.Group.average;
 import static org.mongodb.morphia.aggregation.Group.first;
 import static org.mongodb.morphia.aggregation.Group.grouping;
 import static org.mongodb.morphia.aggregation.Group.id;
 import static org.mongodb.morphia.aggregation.Group.last;
-import static org.mongodb.morphia.aggregation.Group.sum;
 import static org.mongodb.morphia.aggregation.Projection.projection;
 import static org.mongodb.morphia.aggregation.Sort.ascending;
 
@@ -40,7 +41,7 @@ import static org.mongodb.morphia.aggregation.Sort.ascending;
  * @mongodb.driver.manual tutorial/aggregation-zip-code-data-set/ Aggregation with the Zip Code Data Set
  */
 public class ZipCodeDataSetTest extends TestBase {
-    public static final String MONGO_IMPORT;
+    private static final String MONGO_IMPORT;
     private static final Logger LOG = MorphiaLoggerFactory.get(ZipCodeDataSetTest.class);
 
     static {
@@ -59,12 +60,12 @@ public class ZipCodeDataSetTest extends TestBase {
         Assume.assumeTrue(new File(MONGO_IMPORT).exists());
         installSampleData();
         AggregationPipeline pipeline = getDs().createAggregation(City.class)
-                                              .group(id(grouping("state"), grouping("city")), grouping("pop", sum("pop")))
+                                              .group(id(grouping("state"), grouping("city")), grouping("pop", sum(field("pop"))))
                                               .group("_id.state", grouping("avgCityPop", average("pop")));
         validate(pipeline.aggregate(Population.class), "MN", 5372);
     }
 
-    public void installSampleData() throws IOException, TimeoutException, InterruptedException {
+    private void installSampleData() throws IOException, TimeoutException, InterruptedException {
         File file = new File("zips.json");
         if (!file.exists()) {
             file = new File(System.getProperty("java.io.tmpdir"), "zips.json");
@@ -91,7 +92,7 @@ public class ZipCodeDataSetTest extends TestBase {
 
         AggregationPipeline pipeline
             = getDs().createAggregation(City.class)
-                     .group("state", grouping("totalPop", sum("pop")))
+                     .group("state", grouping("totalPop", sum(field("pop"))))
                      .match(query.field("totalPop").greaterThanOrEq(10000000));
 
 
@@ -106,7 +107,7 @@ public class ZipCodeDataSetTest extends TestBase {
         getMorphia().mapPackage(getClass().getPackage().getName());
         AggregationPipeline pipeline = getDs().createAggregation(City.class)
 
-                                              .group(id(grouping("state"), grouping("city")), grouping("pop", sum("pop")))
+                                              .group(id(grouping("state"), grouping("city")), grouping("pop", sum(field("pop"))))
 
                                               .sort(ascending("pop"))
 

@@ -132,13 +132,14 @@ public class DatastoreImpl implements AdvancedDatastore {
         return new DatastoreImpl(morphia, mapper, mongoClient, database);
     }
 
-    /**
-     * @param source the initial type/collection to aggregate against
-     * @return a new query bound to the kind (a specific {@link DBCollection})
-     */
     @Override
     public AggregationPipeline createAggregation(final Class source) {
         return new AggregationPipelineImpl(this, source);
+    }
+
+    @Override
+    public AggregationPipeline createAggregation(final String name) {
+        return new AggregationPipelineImpl(this, name);
     }
 
     @Override
@@ -455,9 +456,28 @@ public class DatastoreImpl implements AdvancedDatastore {
     }
 
     @Override
+    public DBCollection getCollection(final String name) {
+        if (name == null) {
+            return null;
+        }
+        return getDB().getCollection(name);
+    }
+
+    @Override
     public DBCollection getCollection(final Class clazz) {
         final String collName = mapper.getCollectionName(clazz);
         return getDB().getCollection(collName);
+    }
+
+    /**
+     * @param obj the instance to use for looking up the collection mapping
+     * @return the collection mapped for the type of obj
+     */
+    public DBCollection getCollection(final Object obj) {
+        if (obj == null) {
+            return null;
+        }
+        return getCollection(obj instanceof Class ? (Class) obj : obj.getClass());
     }
 
     @Override
@@ -1018,17 +1038,6 @@ public class DatastoreImpl implements AdvancedDatastore {
     }
 
     /**
-     * @param obj the instance to use for looking up the collection mapping
-     * @return the collection mapped for the type of obj
-     */
-    public DBCollection getCollection(final Object obj) {
-        if (obj == null) {
-            return null;
-        }
-        return getCollection(obj instanceof Class ? (Class) obj : obj.getClass());
-    }
-
-    /**
      * @return the Mapper used by this Datastore
      */
     public Mapper getMapper() {
@@ -1183,13 +1192,6 @@ public class DatastoreImpl implements AdvancedDatastore {
 
     protected void ensureIndexes(final MappedClass mc, final boolean background) {
         ensureIndexes(mc, background, new ArrayList<MappedClass>(), new ArrayList<MappedField>());
-    }
-
-    protected DBCollection getCollection(final String kind) {
-        if (kind == null) {
-            return null;
-        }
-        return getDB().getCollection(kind);
     }
 
     @Deprecated

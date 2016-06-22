@@ -1,5 +1,8 @@
 package org.mongodb.morphia.aggregation;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,12 +17,17 @@ public final class Group {
     private final String name;
     private Group nested;
     private List<Projection> projections;
-    private Accumulator accumulator;
+    private Expression expression;
     private String sourceField;
+
+    private Group(final String name, final Expression expression) {
+        this.name = name;
+        this.expression = expression;
+    }
 
     private Group(final String name, final Accumulator accumulator) {
         this.name = name;
-        this.accumulator = accumulator;
+        this.expression = accumulator;
     }
 
     /**
@@ -109,6 +117,17 @@ public final class Group {
      */
     public static Group grouping(final String name, final Accumulator accumulator) {
         return new Group(name, accumulator);
+    }
+
+    /**
+     * Creates a named grouping
+     *
+     * @param name        the group name
+     * @param expression the expression to create the grouping
+     * @return the Group
+     */
+    public static Group grouping(final String name, final Expression expression) {
+        return new Group(name, expression);
     }
 
     /**
@@ -205,16 +224,11 @@ public final class Group {
      * @param field the field to process
      * @return an Accumulator
      * @mongodb.driver.manual reference/operator/aggregation/sum $sum
+     * @deprecated use {@link Accumulator#sum(Expression...)}
      */
-    public static Accumulator sum(final String field) {
-        return new Accumulator("$sum", field);
-    }
-
-    /**
-     * @return the accumulator for this Group
-     */
-    public Accumulator getAccumulator() {
-        return accumulator;
+    @Deprecated
+    public static Expression sum(final String field) {
+        return Accumulator.sum(AggregationField.field(field));
     }
 
     /**
@@ -244,4 +258,25 @@ public final class Group {
     public Group getNested() {
         return nested;
     }
+
+    DBObject toDatabase() {
+        BasicDBObject dbObject = new BasicDBObject();
+
+        if (projections != null) {
+            final BasicDBObject projection = new BasicDBObject();
+            for (Projection p : projections) {
+                projection.putAll(p.toDatabase());
+            }
+            dbObject.put(name, projection);
+        } else if (nested != null) {
+            dbObject.put(name, nested.toDatabase());
+        } else if (expression != null) {
+            dbObject.put(name, expression.toDatabase());
+        } else {
+            dbObject.put(name, sourceField);
+        }
+
+        return dbObject;
+    }
+
 }
