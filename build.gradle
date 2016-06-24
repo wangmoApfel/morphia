@@ -1,4 +1,4 @@
-ext.configDir = new File(rootDir, 'config')
+def configDir = new File(rootDir, 'config')
 ext.slf4jVersion = '1.7.5'
 
 if (JavaVersion.current().isJava8Compatible()) {
@@ -18,13 +18,14 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.kordamp.gradle:clirr-gradle-plugin:0.2.2'
+        classpath 'org.kordamp.gradle:clirr-gradle-plugin:0.2.3'
+        classpath 'org.apache.ant:ant:1.9.7'
         classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:1.12.+'
     }
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.13'
+    gradleVersion = '2.14'
 }
 
 
@@ -125,11 +126,6 @@ configure(subprojects.findAll { it.name != 'util' }) {
         options.charSet 'UTF-8'
         options.docEncoding 'UTF-8'
     }
-}
-
-task clirrRootReport(type: org.kordamp.gradle.clirr.ClirrReportTask) << {
-    dependsOn = subprojects.tasks.clirr
-    reports = files((subprojects.findAll { it.clirr.enabled == true }).tasks.clirr.xmlReport)
 }
 
 def buildingWith(n) {

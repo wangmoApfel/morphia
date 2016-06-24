@@ -5,6 +5,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.Cursor;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.MongoCommandException;
 import com.mongodb.ReadPreference;
 import org.mongodb.morphia.DatastoreImpl;
 import org.mongodb.morphia.geo.GeometryShapeConverter;
@@ -28,7 +29,6 @@ public class AggregationPipelineImpl implements AggregationPipeline {
     private final List<DBObject> stages = new ArrayList<DBObject>();
     private final Mapper mapper;
     private final DatastoreImpl datastore;
-    private boolean firstStage = false;
 
     /**
      * Creates an AggregationPipeline
@@ -86,8 +86,13 @@ public class AggregationPipelineImpl implements AggregationPipeline {
             LOG.debug("stages = " + stages);
         }
 
-        Cursor cursor = collection.aggregate(stages, options, readPreference);
-        return new MorphiaIterator<U, U>(datastore, cursor, mapper, target, collectionName, mapper.createEntityCache());
+        try {
+            Cursor cursor = collection.aggregate(stages, options, readPreference);
+            return new MorphiaIterator<U, U>(datastore, cursor, mapper, target, collectionName, mapper.createEntityCache());
+        } catch (MongoCommandException e) {
+            LOG.error("Failed pipeline: " + stages);
+            throw e;
+        }
     }
 
     @Override
@@ -116,7 +121,10 @@ public class AggregationPipelineImpl implements AggregationPipeline {
 
     @Override
     public AggregationPipeline group(final String id, final Group... groupings) {
-        DBObject group = new BasicDBObject("_id", "$" + id);
+        DBObject group = new BasicDBObject();
+        if (id != null) {
+            group.put("_id", "$" + id);
+        }
         for (Group grouping : groupings) {
             group.putAll(grouping.toDatabase());
         }
@@ -184,7 +192,6 @@ public class AggregationPipelineImpl implements AggregationPipeline {
 
     @Override
     public AggregationPipeline project(final Projection... projections) {
-        firstStage = stages.isEmpty();
         DBObject dbObject = new BasicDBObject();
         for (Projection projection : projections) {
             dbObject.putAll(projection.toDatabase());

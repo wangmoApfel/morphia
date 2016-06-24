@@ -1,5 +1,5 @@
 def urlVersion = version.split('\\.')[0..1].join('.')
-def formalVersion = version.split('\\.').dropRight(1).join('.') + ( version.contains('-SNAPSHOT') ? '-SNAPSHOT' : '')
+def formalVersion = version.split('\\.')[0..-2].join('.') + ( version.contains('-SNAPSHOT') ? '-SNAPSHOT' : '')
 def ghPages = file("build/gh-pages")
 
 def gitVersion() {

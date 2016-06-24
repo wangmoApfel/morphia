@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.mongodb.morphia.aggregation.AggregationField.field;
 
 /**
  * Defines a group pipeline stage.
@@ -228,7 +229,7 @@ public final class Group {
      */
     @Deprecated
     public static Expression sum(final String field) {
-        return Accumulator.sum(AggregationField.field(field));
+        return Accumulator.sum(field(field));
     }
 
     /**

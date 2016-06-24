@@ -1,5 +1,6 @@
 apply plugin: 'org.kordamp.gradle.clirr'
 
+def configDir = new File(rootDir, 'config')
 archivesBaseName = 'morphia'
 
 sourceSets {
@@ -24,6 +25,6 @@ dependencies {
 
 clirr {
     excludeFilter = new File("$configDir/clirr-exclude.yml")
-    baseline = ['org.mongodb.morphia:morphia:1.2.0'].join(':')
+    baseline = ['org.mongodb.morphia', project.name, '1.2.0'].join(':')
     failOnErrors = false
 }
