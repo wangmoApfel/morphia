@@ -25,7 +25,6 @@ import java.util.Date;
  * This converter will take a {@link Instant} and convert it to a java.util.Date instance.
  */
 public class InstantConverter extends TypeConverter implements SimpleValueConverter {
-    private final NumberPadder padder = new NumberPadder(3);
 
     /**
      * Creates the Converter.
