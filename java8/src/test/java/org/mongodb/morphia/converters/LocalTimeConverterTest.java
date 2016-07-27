@@ -31,8 +31,8 @@ public class LocalTimeConverterTest extends ConverterTest<LocalTime, Long> {
     public void testConversion() throws ParseException {
         final LocalTime time = LocalTime.of(12, 30, 45);
 
-        assertFormat(time, 12_30_45_000L);
         compare(LocalTime.class, LocalTime.now());
+        assertFormat(time, 45045000L);
     }
 
     @Test

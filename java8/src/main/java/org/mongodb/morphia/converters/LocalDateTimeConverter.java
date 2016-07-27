@@ -25,10 +25,7 @@ import java.util.Date;
 import static java.time.ZoneId.systemDefault;
 
 /**
- * Provides a converter for {@link java.time.LocalDateTime}.  This converter will output the value as a numeric value in the form of
- * yyyyMMddHHmmSSLLL.  This means that while millisecond values will be preserved, nanosecond level precision will be lost.  This format
- * is more efficient storage than what would be necessary to store the full nanosecond precision.  {@link LocalDateTimeToStringConverter}
- * provides a more precise, if less efficient, storage option.
+ * Provides a converter for {@link java.time.LocalDateTime} converting the value to a Date.
  */
 public class LocalDateTimeConverter extends TypeConverter implements SimpleValueConverter {
 
@@ -56,10 +53,6 @@ public class LocalDateTimeConverter extends TypeConverter implements SimpleValue
             return LocalDateTime.ofInstant(date.toInstant(), systemDefault());
         }
 
-        if (val instanceof String) {
-            return LocalDateTime.parse((String) val);
-        }
-
         throw new IllegalArgumentException("Can't convert to LocalDateTime from " + val);
     }
 
@@ -68,7 +61,6 @@ public class LocalDateTimeConverter extends TypeConverter implements SimpleValue
         if (value == null) {
             return null;
         }
-        LocalDateTime dateTime = (LocalDateTime) value;
-        return Date.from(dateTime.atZone(systemDefault()).toInstant());
+        return Date.from(((LocalDateTime) value).atZone(systemDefault()).toInstant());
     }
 }

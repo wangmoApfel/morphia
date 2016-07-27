@@ -25,18 +25,13 @@ import java.time.LocalTime;
  */
 public class LocalTimeConverter extends TypeConverter implements SimpleValueConverter {
 
-    public static final int NANO_OFFSET = 1_000_000_000;
-    private final NumberPadder padder = new NumberPadder(2, 2, 3);
+    private static final int MILLI_MODULO = 1_000_000;
 
     /**
      * Creates the Converter.
      */
     public LocalTimeConverter() {
-        this(LocalTime.class);
-    }
-
-    private LocalTimeConverter(final Class clazz) {
-        super(clazz);
+        super(LocalTime.class);
     }
 
     @Override
@@ -50,9 +45,7 @@ public class LocalTimeConverter extends TypeConverter implements SimpleValueConv
         }
 
         if (val instanceof Number) {
-            long time = ((Number) val).longValue();
-            long[] values = padder.extract(time);
-            return LocalTime.of((int) values[0], (int) values[1], (int) values[2], (int) values[3] * 1_000_000);
+            return LocalTime.ofNanoOfDay(((Number) val).longValue() * MILLI_MODULO);
         }
 
         throw new IllegalArgumentException("Can't convert to LocalTime from " + val);
@@ -64,6 +57,7 @@ public class LocalTimeConverter extends TypeConverter implements SimpleValueConv
             return null;
         }
         LocalTime time = (LocalTime) value;
-        return padder.pad(time.getHour(), time.getMinute(), time.getSecond(), time.getNano() / 1_000_000);
+
+        return time.toNanoOfDay() / MILLI_MODULO;
     }
 }

@@ -44,11 +44,6 @@ public class InstantConverter extends TypeConverter implements SimpleValueConver
             return val;
         }
 
-        if (val instanceof Number) {
-            long[] values = padder.extract(((Number) val).longValue());
-            return Instant.ofEpochSecond(values[0], values[1] * 1_000_000);
-        }
-
         if (val instanceof Date) {
             return ((Date) val).toInstant();
         }

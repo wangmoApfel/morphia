@@ -25,11 +25,9 @@ import java.util.Date;
 import static java.time.ZoneId.systemDefault;
 
 /**
- * Provides a converter for {@link LocalDate} converting the value in to the numeric form of yyyyMMdd.
+ * Provides a converter for {@link LocalDate} converting the value to the Date at the start of that day.
  */
 public class LocalDateConverter extends TypeConverter implements SimpleValueConverter {
-    private final NumberPadder padder = new NumberPadder(2, 2);
-
     /**
      * Creates the Converter.
      */
@@ -50,7 +48,7 @@ public class LocalDateConverter extends TypeConverter implements SimpleValueConv
         if (val instanceof Date) {
             final Date date = (Date) val;
             Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(date.getTime());
+            cal.setTime(date);
             return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
         }
 

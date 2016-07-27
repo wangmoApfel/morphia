@@ -30,7 +30,10 @@ public class LocalDateConverterTest extends ConverterTest<LocalDate, Date> {
 
     @Test
     public void testConversion() throws ParseException {
-        assertFormat(LocalDate.of(2016, 5, 1), new Date(116, Calendar.MAY, 1));
+        Calendar cal = Calendar.getInstance();
+        cal.set(2016, Calendar.MAY, 1, 0, 0, 0);
+        cal.clear(Calendar.MILLISECOND);
+        assertFormat(LocalDate.of(2016, 5, 1), cal.getTime());
 
         compare(LocalDate.class, LocalDate.now());
 
