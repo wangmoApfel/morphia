@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright (c) 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ package org.mongodb.morphia.converters;
 import org.mongodb.morphia.mapping.MappedField;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -46,10 +48,7 @@ public class LocalDateConverter extends TypeConverter implements SimpleValueConv
         }
 
         if (val instanceof Date) {
-            final Date date = (Date) val;
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(date);
-            return LocalDate.of(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+            return LocalDateTime.ofInstant(((Date) val).toInstant(), ZoneId.systemDefault()).toLocalDate();
         }
 
         throw new IllegalArgumentException("Can't convert to LocalDate from " + val);

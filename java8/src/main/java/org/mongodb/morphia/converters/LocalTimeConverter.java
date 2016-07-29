@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright (c) 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.mongodb.morphia.mapping.MappedField;
 import java.time.LocalTime;
 
 /**
- * Provides a converter for {@link LocalTime} and convert it to its numeric form of &lt;hour&gt;&lt;minute&gt;&lt;seconds&gt;&lt;nanos&gt;.
+ * Provides a converter for {@link LocalTime} and convert it to its numeric form of milliseconds since midnight.
  */
 public class LocalTimeConverter extends TypeConverter implements SimpleValueConverter {
 

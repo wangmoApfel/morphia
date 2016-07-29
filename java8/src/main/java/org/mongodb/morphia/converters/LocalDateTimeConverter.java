@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright (c) 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,10 +47,7 @@ public class LocalDateTimeConverter extends TypeConverter implements SimpleValue
         }
 
         if (val instanceof Date) {
-            final Date date = (Date) val;
-            Calendar cal = Calendar.getInstance();
-            cal.setTimeInMillis(date.getTime());
-            return LocalDateTime.ofInstant(date.toInstant(), systemDefault());
+            return LocalDateTime.ofInstant(((Date) val).toInstant(), systemDefault());
         }
 
         throw new IllegalArgumentException("Can't convert to LocalDateTime from " + val);
