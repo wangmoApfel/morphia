@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.time.LocalTime;
 import java.util.Random;
 
+@SuppressWarnings("Since15")
 public class LocalTimeConverterTest extends ConverterTest<LocalTime, Long> {
     public LocalTimeConverterTest() {
         super(new LocalTimeConverter());
@@ -41,7 +42,7 @@ public class LocalTimeConverterTest extends ConverterTest<LocalTime, Long> {
         for (int hour = 0; hour < 23; hour++) {
             for (int minute = 0; minute < 60; minute++) {
                 for (int second = 0; second < 60; second++) {
-                    compare(LocalTime.class, LocalTime.of(hour, minute, second, random.nextInt(1_000) * 1_000_000));
+                    compare(LocalTime.class, LocalTime.of(hour, minute, second, random.nextInt(1000) * 1000000));
                 }
             }
         }

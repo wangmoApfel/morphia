@@ -18,19 +18,24 @@ package org.mongodb.morphia.converters;
 
 import org.mongodb.morphia.mapping.MappedField;
 
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.Date;
 
-/**
- * This converter will take a {@link Instant} and convert it to a java.util.Date instance.
- */
-public class InstantConverter extends TypeConverter implements SimpleValueConverter {
+import static java.time.ZoneId.systemDefault;
 
+/**
+ * Provides a converter for {@link LocalDate} converting the value to the Date at the start of that day.
+ */
+@SuppressWarnings("Since15")
+public class LocalDateConverter extends TypeConverter implements SimpleValueConverter {
     /**
      * Creates the Converter.
      */
-    public InstantConverter() {
-        super(Instant.class);
+    public LocalDateConverter() {
+        super(LocalDate.class);
     }
 
     @Override
@@ -39,15 +44,15 @@ public class InstantConverter extends TypeConverter implements SimpleValueConver
             return null;
         }
 
-        if (val instanceof Instant) {
+        if (val instanceof LocalDate) {
             return val;
         }
 
         if (val instanceof Date) {
-            return ((Date) val).toInstant();
+            return LocalDateTime.ofInstant(((Date) val).toInstant(), ZoneId.systemDefault()).toLocalDate();
         }
 
-        throw new IllegalArgumentException("Can't convert to Instant from " + val);
+        throw new IllegalArgumentException("Can't convert to LocalDate from " + val);
     }
 
     @Override
@@ -55,6 +60,9 @@ public class InstantConverter extends TypeConverter implements SimpleValueConver
         if (value == null) {
             return null;
         }
-        return Date.from((Instant) value);
+        LocalDate date = (LocalDate) value;
+        return Date.from(date.atStartOfDay()
+                             .atZone(systemDefault())
+                             .toInstant());
     }
 }

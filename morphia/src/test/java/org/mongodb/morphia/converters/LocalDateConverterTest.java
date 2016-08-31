@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,25 +19,25 @@ package org.mongodb.morphia.converters;
 import org.junit.Test;
 
 import java.text.ParseException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LocalDateTimeConverterTest extends ConverterTest<LocalDateTime, Date> {
-    public LocalDateTimeConverterTest() {
-        super(new LocalDateTimeConverter());
+@SuppressWarnings("Since15")
+public class LocalDateConverterTest extends ConverterTest<LocalDate, Date> {
+    public LocalDateConverterTest() {
+        super(new LocalDateConverter());
     }
 
     @Test
     public void testConversion() throws ParseException {
-
         Calendar cal = Calendar.getInstance();
-        cal.set(2016, Calendar.MAY, 1, 12, 30, 45);
-        cal.set(Calendar.MILLISECOND, 718);
-        assertFormat(LocalDateTime.of(2016, 5, 1, 12, 30, 45, 718004350), cal.getTime());
+        cal.set(2016, Calendar.MAY, 1, 0, 0, 0);
+        cal.clear(Calendar.MILLISECOND);
+        assertFormat(LocalDate.of(2016, 5, 1), cal.getTime());
 
-        compare(LocalDateTime.class, LocalDateTime.now());
-        compare(LocalDateTime.class, LocalDateTime.of(12016, 3, 11, 3, 30));
+        compare(LocalDate.class, LocalDate.now());
+
+        compare(LocalDate.class, LocalDate.of(14478, 10, 15));
     }
-
 }

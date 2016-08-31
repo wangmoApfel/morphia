@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,15 +29,14 @@ import java.time.temporal.ChronoUnit;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+@SuppressWarnings("Since15")
 public class Java8EntityTest extends TestBase {
     @Test
     public void queries() {
-        Java8ConvertersHelper.addConverters(getMorphia());
-
         Instant instant = Instant.ofEpochMilli(System.currentTimeMillis());
         LocalDate localDate = LocalDate.of(1995, 10, 15);
-        LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123 * 1_000_000);
-        LocalTime localTime = LocalTime.of(10, 29, 15, 848_000_000);
+        LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123 * 1000000);
+        LocalTime localTime = LocalTime.of(10, 29, 15, 848000000);
 
         Java8Entity entity = createEntity(getDs(), instant, localDate, localDateTime, localTime);
 
@@ -49,10 +48,9 @@ public class Java8EntityTest extends TestBase {
 
     @Test
     public void rangeQueries() {
-        Java8ConvertersHelper.addConverters(getMorphia());
         Instant instant = Instant.ofEpochMilli(System.currentTimeMillis());
         LocalDate localDate = LocalDate.of(1995, 10, 15);
-        LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123 * 1_000_000);
+        LocalDateTime localDateTime = LocalDateTime.of(2016, 4, 10, 14, 15, 16, 123 * 1000000);
         LocalTime localTime = LocalTime.of(10, 29, 15, 848493);
 
         for (int i = 0; i < 10; i++) {

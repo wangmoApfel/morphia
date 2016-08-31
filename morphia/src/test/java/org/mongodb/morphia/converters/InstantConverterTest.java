@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008-2016 MongoDB, Inc.
+ * Copyright 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
-dependencies {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+package org.mongodb.morphia.converters;
 
-    compile project(':morphia')
-    testCompile project(path: ':morphia', configuration: 'testRuntime')
-    testCompile "org.slf4j:slf4j-simple:${slf4jVersion}"
+import org.junit.Assert;
+import org.junit.Test;
 
+import java.time.Instant;
+import java.util.Date;
+
+public class InstantConverterTest extends ConverterTest<Instant, Date> {
+    public InstantConverterTest() {
+        super(new InstantConverter());
+    }
+
+    @Test
+    public void testConversion() {
+        Instant instant = Instant.ofEpochSecond(42);
+
+        Assert.assertEquals(new Date(42000), getConverter().encode(instant));
+        compare(Instant.class, instant);
+    }
 }

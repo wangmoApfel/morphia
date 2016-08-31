@@ -18,20 +18,23 @@ package org.mongodb.morphia.converters;
 
 import org.mongodb.morphia.mapping.MappedField;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+
+import static java.time.ZoneId.systemDefault;
 
 /**
- * Provides a converter for {@link LocalTime} and convert it to its numeric form of milliseconds since midnight.
+ * Provides a converter for {@link java.time.LocalDateTime} converting the value to a Date.
  */
-public class LocalTimeConverter extends TypeConverter implements SimpleValueConverter {
-
-    private static final int MILLI_MODULO = 1_000_000;
+@SuppressWarnings("Since15")
+public class LocalDateTimeConverter extends TypeConverter implements SimpleValueConverter {
 
     /**
      * Creates the Converter.
      */
-    public LocalTimeConverter() {
-        super(LocalTime.class);
+    public LocalDateTimeConverter() {
+        super(LocalDateTime.class);
     }
 
     @Override
@@ -40,15 +43,15 @@ public class LocalTimeConverter extends TypeConverter implements SimpleValueConv
             return null;
         }
 
-        if (val instanceof LocalTime) {
+        if (val instanceof LocalDateTime) {
             return val;
         }
 
-        if (val instanceof Number) {
-            return LocalTime.ofNanoOfDay(((Number) val).longValue() * MILLI_MODULO);
+        if (val instanceof Date) {
+            return LocalDateTime.ofInstant(((Date) val).toInstant(), systemDefault());
         }
 
-        throw new IllegalArgumentException("Can't convert to LocalTime from " + val);
+        throw new IllegalArgumentException("Can't convert to LocalDateTime from " + val);
     }
 
     @Override
@@ -56,8 +59,6 @@ public class LocalTimeConverter extends TypeConverter implements SimpleValueConv
         if (value == null) {
             return null;
         }
-        LocalTime time = (LocalTime) value;
-
-        return time.toNanoOfDay() / MILLI_MODULO;
+        return Date.from(((LocalDateTime) value).atZone(systemDefault()).toInstant());
     }
 }

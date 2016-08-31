@@ -125,9 +125,7 @@ configure(subprojects.findAll { it.name != 'util' }) {
         options.charSet 'UTF-8'
         options.docEncoding 'UTF-8'
     }
-}
 
-configure(subprojects.findAll { it.name != 'java8' }) {
     sourceCompatibility = JavaVersion.VERSION_1_6
     targetCompatibility = JavaVersion.VERSION_1_6
 }
