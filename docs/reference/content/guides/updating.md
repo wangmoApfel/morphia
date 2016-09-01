@@ -18,7 +18,7 @@ existing documents.  The effects of the update command are defined via
 ## The Field Expression
 
 The field expression, used by all update operations,  can be either a single field name or any dot-notation form (for embedded 
-elements). The positional operator ($) can also be used in the in the field expression for array updates.  To illustrate, consider the 
+elements). The positional operator ($) can also be used in the field expression for array updates.  To illustrate, consider the 
 entity here:
 
 ```java
