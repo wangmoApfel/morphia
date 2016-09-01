@@ -87,7 +87,7 @@ After this update, the name of the hotel would be `null` when the entity is load
 To simply increment or decrement values in the database, updates like these would be used:
 
 ```java
-// increment 'stars' by 4
+// increment 'stars' by 1
 UpdateOperations ops = datastore
     .createUpdateOperations(Hotel.class)
     .inc("stars");
